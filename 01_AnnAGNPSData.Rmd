@@ -1,0 +1,84 @@
+---
+title: "AnnAGNPS Output Processing"
+author: "Brady Nahkala"
+date: "9/1/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This file serves to organize some of the data processing completed for the AnnAGNPS simulations, largely for data analysis and publication of Chapter 3 of my thesis. The data processing necessary for Chapter 4 (random forest model) should be self contained within a github repo and model c/v script. This file likely does not contain all data and scripting I have completed for data analysis, but at least should enable recreation to go a little more smoothly than previous formats, which were a scattered series of .R files. 
+
+# Library
+
+```{r, warning=F, message=F}
+library(dplyr)
+library(tidyr)
+library(data.table)
+library(reshape2)
+```
+
+
+# Data Import
+
+Import the raw time series data from all simulations and for all potholes. See naming schemes in other documents or headers in CSV files to understand scenarios parameters. 
+
+## Main data frames 
+
+```{r}
+data.bunny.df <- read.table("Bunny_Output_TEST_headers.csv", header=TRUE, sep=",")
+data.walnut.df <- read.table("Walnut_Output_TEST_headers.csv", header=TRUE, sep=",")
+data.lettuce.df <- read.table("Lettuce_Output_TEST_headers.csv", header=TRUE, sep=",")
+data.cardinal.df <- read.table("Cardinal_Output_TEST_headers.csv", header=TRUE, sep=",")
+data.mouth.df <- read.table("Mouth_Output_TEST_headers.csv", header=TRUE, sep=",")
+data.hen.df <- read.table("HenPlume_Output_TEST_headers.csv", header=TRUE, sep=",")
+```
+
+## Pothole and scenario characteristics
+
+```{r}
+chars.potholes <- data.frame("pothole" = c("Bunny", "Walnut", "Lettuce", "Cardinal", "Hen", "Mouth"), 
+                           "ca.sa.ratio" = c(7.5, 3.7, 6.3, 8.7, 6.9, 10.2),
+                           "area.max" = c(5.35, 2.6, 2.11, 1.49, 0.51, 0.94),
+                           "vol.max" = c(29356, 11838, 8274, 5832, 1766, 1136),
+                           "drainage.status" = c("high", "medium", "low", "medium", "none", "none"), 
+                           "pothole.cover" = c("CS", "CS", "CS", "CS", "CS", "R"),
+                           "field.cover" = c(rep("CS")),
+                           "tillage" = c(rep("conventional")))
+
+chars.scenarios <- data.frame("scenario" = c("Base", "RetiredAll", "ConTill", "RetiredPothole", "Drain1", "Drain2", "Drain3",
+                                             "PlantDate1", "PlantDate2", "PlantDate3", "PlantDate4", "NoTill", "ConTillRetired",
+                                             "NoTillRetired", "ConTillDrain1", "ConTillDrain2", "ConTillDrain3", "CoverCrop", 
+                                             "BaseRetired", "Drain1Retired", "Drain2Retired", "Drain3Retired", "Drain0", "Drain0CT", 
+                                             "Drain0NT", "Drain1NT", "Drain2NT", "Drain3NT", "BaseRetiredCT", "Drain1RetiredCT", 
+                                             "Drain2RetiredCT", "Drain3RetiredCT", "BaseRetiredNT", "Drain1RetiredNT", "Drain2RetiredNT",
+                                             "Drain3RetiredNT", "Drain1RetiredAll", "Drain2RetiredAll", "Drain3RetiredAll"),
+                              "drainage.status" = c("base", "none", "base","none", "low", "medium", "high", "base", "base", "base",
+                                                    "base", "base", "none", "none", "low", "medium", "high", "base", "base", 
+                                                    "low", "medium", "high", "none", "none", "none", "low", "medium", "high", "base",
+                                                    "low", "medium", "high", "base", "low", "medium", "high", "low", "medium", "high"), 
+                              "pothole.cover" = c("base", "R", "base", "R", rep("CS", 3), rep("base", 5), rep("R", 2), rep("CS", 3), "base",
+                                                  rep("R", 4), rep("CS", 6), "base", rep("R", 10)),
+                              "field.cover" = c("base", "R", rep("base", 15), "CC", rep("base", 4), rep("CS", 6), rep("R", 11)),
+                              "tillage" = c("base", "NA", "contill", rep("base", 8), "notill", "contill", "notill", rep("contill", 3),
+                                            "notill", rep("base", 4), "conventional", "contill", rep("notill", 4), rep("contill", 4), 
+                                            rep("notill", 4), rep("NA", 3)))
+```
+
+## Precipitation characateristics (PRISM)
+
+```{r}
+precip <- data.frame("Year" = c(1994:2018), 
+                     "P_mm" = c(719.3, 749.4, 894.6, 679.6, 962.2, 923.2, 623.5, 805.2, 700.3, 821.5, 833.4, 769.2, 787.3, 
+                                993.5, 1171.6, 962.5, 1261.1, 765.2, 642.2, 825.4, 1109.7, 1255.8, 1019.3, 853.3, 1353.5))
+
+precip2 <- precip[order(precip$P_mm), ]
+barplot(precip2$P_mm)
+
+precip.low <- precip2[1:8, ]
+precip.med <- precip2[9:16, ]
+precip.high <- precip2[17:25, ]
+```
+

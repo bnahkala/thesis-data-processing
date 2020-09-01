@@ -1,0 +1,160 @@
+---
+title: "AnnAGNPS Output Organization Pt III"
+author: "Brady Nahkala"
+date: "9/1/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This is Part III of my data organization. This creates the data summaries using the functions from PT II. 
+
+# Monthly maximums 
+
+```{r}
+max.month.bunny <- find.monthly.max(data.bunny.df)
+max.month.walnut <- find.monthly.max(data.walnut.df)
+max.month.lettuce <- find.monthly.max(data.lettuce.df)
+max.month.cardinal <- find.monthly.max(data.cardinal.df)
+max.month.hen <- find.monthly.max(data.hen.df)
+max.month.mouth <- find.monthly.max(data.mouth.df)
+```
+
+# Total and average days of inundation
+
+```{r}
+count.nonzero.bunny <- count.nonzero.depths(data.bunny.df)
+count.nonzero.walnut <- count.nonzero.depths(data.walnut.df)
+count.nonzero.lettuce <- count.nonzero.depths(data.lettuce.df)
+count.nonzero.cardinal <- count.nonzero.depths(data.cardinal.df)
+count.nonzero.hen <- count.nonzero.depths(data.hen.df)
+count.nonzero.mouth <- count.nonzero.depths(data.mouth.df)
+
+avg.annual.bunny <- avg.annual.days(data.bunny.df)
+avg.annual.walnut <- avg.annual.days(data.walnut.df)
+avg.annual.lettuce <- avg.annual.days(data.lettuce.df)
+avg.annual.cardinal <- avg.annual.days(data.cardinal.df)
+avg.annual.hen <- avg.annual.days(data.hen.df)
+avg.annual.mouth <- avg.annual.days(data.mouth.df)
+```
+
+# Count of event lenghts in the simulations
+
+```{r}
+event.lengths.bunny <- count.events(data.bunny.df)
+event.lengths.walnut <- count.events(data.walnut.df)
+event.lengths.lettuce <- count.events(data.lettuce.df)
+event.lengths.cardinal <- count.events(data.cardinal.df)
+event.lengths.hen <- count.events(data.hen.df)
+event.lengths.mouth <- count.events(data.mouth.df)
+```
+
+# Aggregate some of the results
+
+This combines some of the individual pothole data into common data frames and manipulates/adds some extra data.The average number of days by wetness needs troubleshooting. 
+
+```{r}
+data.bunny.df <- append.wet.char(data.bunny.df)
+# avg.annual.by.wetness.bunny <- avg.annual.days.by.wetness(data.bunny.df)
+
+data.walnut.df <- append.wet.char(data.walnut.df)
+# avg.annual.by.wetness.walnut <- avg.annual.days.by.wetness(data.walnut.df)
+
+data.lettuce.df <- append.wet.char(data.lettuce.df)
+# avg.annual.by.wetness.lettuce <- avg.annual.days.by.wetness(data.lettuce.df)
+
+data.cardinal.df <- append.wet.char(data.cardinal.df)
+# avg.annual.by.wetness.cardinal <- avg.annual.days.by.wetness(data.cardinal.df)
+
+data.hen.df <- append.wet.char(data.hen.df)
+# avg.annual.by.wetness.hen <- avg.annual.days.by.wetness(data.hen.df)
+
+data.mouth.df <- append.wet.char(data.mouth.df)
+# avg.annual.by.wetness.mouth <- avg.annual.days.by.wetness(data.mouth.df)
+
+# MERGE DATA FRAMES =================
+
+event.lengths.bunny <- as.data.frame(event.lengths.bunny)
+event.lengths.bunny$Pothole <- as.vector("bunny")
+
+event.lengths.walnut <- as.data.frame(event.lengths.walnut)
+event.lengths.walnut$Pothole <- as.vector("walnut")
+
+event.lengths.lettuce <- as.data.frame(event.lengths.lettuce)
+event.lengths.lettuce$Pothole <- as.vector("lettuce")
+
+event.lengths.cardinal <- as.data.frame(event.lengths.cardinal)
+event.lengths.cardinal$Pothole <- as.vector("cardinal")
+
+event.lengths.hen <- as.data.frame(event.lengths.hen)
+event.lengths.hen$Pothole <- as.vector("hen")
+
+event.lengths.mouth <- as.data.frame(event.lengths.mouth)
+event.lengths.mouth$Pothole <- as.vector("mouth")
+
+event.lengths.all <- rbind(event.lengths.bunny, event.lengths.walnut, event.lengths.lettuce, event.lengths.cardinal, event.lengths.hen, event.lengths.mouth)
+event.lengths.all$consecdays <- as.vector(rep(1:200))
+
+event.lengths.all.melt <- melt(event.lengths.all[, 5:45], id=c("Pothole", "consecdays"))
+
+
+avg.annual.all <- rbind(avg.annual.bunny[5:43], avg.annual.walnut[5:43], avg.annual.lettuce[5:43], avg.annual.cardinal[5:43],
+                        avg.annual.hen[5:43], avg.annual.mouth[5:43])
+
+# avg.annual.by.wetness.all <- rbind(avg.annual.by.wetness.bunny, avg.annual.by.wetness.walnut, avg.annual.by.wetness.lettuce, 
+                                   # avg.annual.by.wetness.cardinal, avg.annual.by.wetness.hen, avg.annual.by.wetness.mouth)
+# avg.annual.by.wetness.all[ , "Pothole"] <- c(rep("bunny",3), rep("walnut", 3), rep("lettuce", 3), rep("cardinal", 3), rep("hen", 3),
+                                             # rep("mouth", 3))
+
+# not sure why, but needed to specify the data was a data frame?
+# avg.annual.by.wetness.all.melt <- melt(as.data.frame(avg.annual.by.wetness.all), id=c("Pothole", "wetness"))
+# avg.annual.by.wetness.all.melt$code <- c(rep("B", 18), rep("D0-R-R", 18),rep("DX-CS-CT", 18),rep("DX-R-CV", 18),rep("D1-CS-CV", 18),
+                                         # rep("D2-CS-CV", 18),rep("D3-CS-CV", 18),rep("PD1", 18),rep("PD2", 18),rep("PD3", 18),
+                                         # rep("PD4", 18),rep("DX-CS-NT", 18),rep("D0-R-CT", 18),rep("D0-R-NT", 18),rep("D1-CS-CT", 18),
+                                         # rep("D2-CS-CT", 18),rep("D3-CS-CT", 18),rep("CC", 18),rep("DX-R-CV", 18),rep("D1-R-CV", 18),
+                                         # rep("D2-R-CV", 18),rep("D3-R-CV", 18), rep("D0-CS-CV", 18),rep("D0-CS-CT", 18), rep("D0-CS-NT", 18),
+                                         # rep("D1-CS-NT", 18), rep("D2-CS-NT", 18), rep("D3-CS-NT", 18), rep("DX-R-CT", 18),rep("D1-R-CT", 18),
+                                         # rep("D2-R-CT", 18),rep("D3-R-CT", 18),rep("DX-R-NT", 18),rep("D1-R-NT", 18),rep("D2-R-NT", 18),
+                                         # rep("D3-R-NT", 18),rep("D1-R-R", 18),rep("D2-R-R", 18),rep("D3-R-R", 18))
+
+
+# convert to data frames
+count.nonzero.bunny <- as.data.frame(count.nonzero.bunny)
+count.nonzero.walnut <- as.data.frame(count.nonzero.walnut)
+count.nonzero.lettuce <- as.data.frame(count.nonzero.lettuce)
+count.nonzero.cardinal <- as.data.frame(count.nonzero.cardinal)
+count.nonzero.hen <- as.data.frame(count.nonzero.hen)
+count.nonzero.mouth <- as.data.frame(count.nonzero.mouth)
+```
+
+# Bind more data
+
+This was originally part of the 'data_processing_scne_partition.R' script. 
+
+```{r}
+data.for.partitioning2 <- rbind(max.month.bunny, max.month.walnut, max.month.lettuce, max.month.cardinal, 
+                                max.month.hen, max.month.mouth)
+data.for.partitioning2$Pothole <- c(rep("Bunny", 300), rep("Walnut", 300), rep("Lettuce", 300),
+                                    rep("Cardinal", 300), rep("Hen", 300), rep("Mouth", 300))
+data.for.partitioning2 <- melt(data.for.partitioning2, id=c("Year", "Month", "Pothole"))
+
+
+data.all.for.partitioning <- rbind(data.bunny.df, data.walnut.df, data.lettuce.df, data.cardinal.df, 
+                                   data.hen.df, data.mouth.df)
+
+data.all.for.partitioning$Pothole <- c(rep("Bunny", 9131), rep("Walnut", 9131), rep("Lettuce", 9131),
+                                    rep("Cardinal", 9131), rep("Hen", 9131), rep("Mouth", 9131))
+data.all.for.partitioning <- melt(data.all.for.partitioning, id=c("Gregorian", "Year", "Month","Day", "Pothole", "wetness"))
+```
+
+
+# Export data for step-by-step reproducibility 
+
+```{r}
+write.csv(event.lengths.all.melt, "event_lengths.csv")
+write.csv(data.for.partitioning2, "monthly_maximums.csv")
+# write.csv(data.all.for.partitioning, "annagnps_time_series_melted.csv") # um actually this is larger than an excel file can hold in one sheet
+```
+

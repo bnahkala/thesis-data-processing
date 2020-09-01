@@ -1,0 +1,156 @@
+---
+title: "AnnAGNPS Output Processing Pt II"
+author: "Brady Nahkala"
+date: "9/1/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This is part II of my data organization. These are data processing functions I wrote to manipulate the daily time series output from AnnAGNPS in various ways including:
+1. monthly maximums (this one is an embarrassing brute force function, and I just haven't rewritten) 
+2. average annual days of inundation 
+3. count nonzero depths
+4. count number of events 
+
+# Monthly maximums
+
+```{r}
+# FIND MONTHLY MAX ==================
+# this function utilizes dplyr, groups the data by year and month, and outputs 
+# a table that reflects the maximum montly value for each simulation in the data
+# this was generated when thinking about Pawan's second paper
+find.monthly.max <- function(data.df) {
+    max.by.month <- data.df %>%
+    dplyr::group_by(Year, Month) %>%
+    dplyr::summarise(Base=max(Base), RetiredAll=max(RetiredAll), ConTill =max(ConTill), 
+              RetiredPothole=max(RetiredPothole), Drain01=max(Drain01), Drain02=max(Drain02),
+              Drain03=max(Drain03), PlantDate01=max(PlantDate01), PlantDate02=max(PlantDate02),
+              PlantDate03=max(PlantDate03), PlantDate04=max(PlantDate04), NoTill=max(NoTill),
+              ConTillRetired=max(ConTillRetired), NoTillRetired=max(NoTillRetired), 
+              ConTillDrain01=max(ConTillDrain01), ConTillDrain02=max(ConTillDrain02),ConTillDrain03=max(ConTillDrain03),
+              CoverCrop=max(CoverCrop), BaseRetired=max(BaseRetired), Drain1Retired=max(Drain1Retired), 
+              Drain2Retired=max(Drain2Retired), Drain3Retired=max(Drain3Retired), Drain0=max(Drain0), Drain0CT=max(Drain0CT),
+              Drain0NT=max(Drain0NT), Drain1NT=max(Drain1NT), Drain2NT=max(Drain2NT), Drain3NT=max(Drain3NT), BaseRetiredCT=max(BaseRetiredCT),
+              Drain1RetiredCT=max(Drain1RetiredCT), Drain2RetiredCT=max(Drain2RetiredCT), Drain3RetiredCT=max(Drain3RetiredCT), 
+              BaseRetiredNT=max(BaseRetiredNT), Drain1RetiredNT=max(Drain1RetiredNT), Drain2RetiredNT = max(Drain2RetiredNT), 
+              Drain3RetiredNT=max(Drain3RetiredNT), Drain1RetiredAll=max(Drain1RetiredAll), Drain2RetiredAll=max(Drain2RetiredAll),
+              Drain3RetiredAll=max(Drain3RetiredAll)) 
+  return(max.by.month)
+}
+```
+
+# Average annual days of inundation
+
+```{r}
+# AVERAGE ANNUAL DAYS OF INUNDATION ==
+# this function finds the average annual # of inundated 
+# days for each simulation scenario 
+
+avg.annual.days <- function(data.df) {
+  total.days <- colSums(data.df != 0)
+  avg.per.year = total.days / 25
+  return(avg.per.year)
+}
+```
+
+# Assign precipitation binning 
+
+This categorizes the rainfall into high, medium or low annual rainfall and creates a column with that assignment based on the year. 
+
+```{r}
+append.wet.char <- function(data.df) {
+  for (x in 1:9131) {
+    
+    if (data.df[x, 2] == 2000 | data.df[x, 2] == 2012 | data.df[x, 2] == 1997 | data.df[x, 2] == 2002 |
+        data.df[x, 2] == 1994 | data.df[x, 2] == 1995 | data.df[x, 2] == 2011 | data.df[x, 2] == 2005)  {
+      data.df$wetness[x] = "low"
+      
+    } else if (data.df[x, 2] == 2006 | data.df[x, 2] == 2001 | data.df[x, 2] == 2003 | data.df[x, 2] == 2013 |
+               data.df[x, 2] == 2004 | data.df[x, 2] == 2017 | data.df[x, 2] == 1996 | data.df[x, 2] == 1999) {
+      data.df$wetness[x] = "med"
+      
+    } else {
+      data.df$wetness[x] = "high"
+      
+    }
+    
+  }
+  return(data.df)
+}
+
+avg.annual.days.by.wetness <- function(data.df) {
+  dat <- data.df %>% 
+    group_by(wetness) %>%
+    summarise_each(funs(n_distinct)) 
+  
+  
+  for (x in 1:3){
+    for (y in 6:44)
+      if (dat$wetness[x] == "med" | dat$wetness[x] == "low"){
+        yr <- 8
+        dat[x,y] = dat[x,y]/yr
+      } else {
+        yr <- 9
+        dat[x,y] = dat[x,y]/yr
+      }
+
+  }
+  
+  dat <- dat[ , c(1,6:44)]
+  return(dat)
+}
+```
+
+# Count nonzero depths
+
+```{r}
+# COUNT NONZERO DEPTHS ================
+# this function counts the number of days inundated without averaging (see above function)
+
+count.nonzero.depths <- function(data.df) {
+  count.by.month <- apply(data.df, 2, function(c)sum(c!=0))
+  return(count.by.month)
+}
+```
+
+# Count the number of events of each length
+this function converts the df to a matrix, creates a new matrix that records when there is a nonzero value and what day in the event it occurs, counts the number of  times each number not equal to zero occurs, and then  corrects the count of total number of events in the simulation (so that days are not double counted in the event)
+
+
+```{r}
+count.events <- function(data.df) {
+  mat <- matrix(0L, nrow = 9131, ncol = 43)
+  mat.data <- data.matrix(data.df, rownames.force = NA)
+  mat[1, ] <- 0
+  for (x in (1:43)) {
+    for (y in (2:9131)) {
+      if (mat.data[y, x] >0) {
+        mat[y,x] <- 1 + mat[y-1, x]
+      } else {
+        mat[y,x] <- 0
+      }
+    }
+  }
+  
+  count.by.sim <- matrix(0L, nrow = 200, ncol = 43)
+  for (x in (5:43)) {
+    for (y in (1:9131)) {
+      val = mat[y, x]    
+      count.by.sim[val,x] <- count.by.sim[val, x]+1
+    }
+  }
+  
+  for (x in (5:43)) {
+    for (y in (199:1)) {
+      count.by.sim[y, x] <- count.by.sim[y, x] - sum(count.by.sim[(y+1):200, x]) 
+    }
+  }
+  
+  count.by.sim <- as.data.frame(count.by.sim)
+  return(count.by.sim)
+}
+```
+

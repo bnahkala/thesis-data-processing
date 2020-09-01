@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1598975122170.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2673897425",
+    "id" : "CBD72223",
+    "lastKnownWriteTime" : 1594393734,
+    "last_content_update" : 1594393734,
+    "path" : "C:/AGNPS_Watershed_Studies/Output_Database/depth and surface area/conversions/conversions/area_forMLPub.Rmd",
+    "project_path" : null,
+    "properties" : {
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

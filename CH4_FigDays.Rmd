@@ -1,0 +1,138 @@
+---
+title: "Publication Figure Script"
+author: "Brady Nahkala"
+date: "9/1/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Data import
+
+```{r}
+data.drain <- read.csv("CH4_days_flooded.csv")
+days.data.drain0 <- data.drain[1:126, ]
+days.data.drain1 <- data.drain[127:252, ]
+days.data.drain2 <- data.drain[253:378, ]
+days.data.drain3 <- data.drain[379:504▄, ]
+```
+
+# Script
+```{r}
+library(dplyr)
+library(tidyr)
+library(data.table)
+library(reshape2)
+library(ggplot2)
+library(ggpubr)
+
+```
+
+```{r}
+simulation_numbers <- data.frame("Drain0" = c(22, 23, 24, 3, 12, 13, 1),
+                                 "Drain1" = c(4, 14, 25, 19, 29, 33, 36),
+                                 "Drain2" = c(5, 15, 26, 20, 30, 34, 37),
+                                 "Drain3" = c(6, 16, 27, 21, 31, 35, 38))
+simulation_numbers2 <- data.frame("CSCV" = c(22, 4, 5, 6),
+                                 "CSCT" = c(23, 14, 15, 16),
+                                 "CSNT" = c(24, 25, 26, 27),
+                                 "RCV" = c(3, 19, 20, 21),
+                                 "RCT" = c(12, 29, 30, 31),
+                                 "RNT" = c(13, 33, 34, 35),
+                                 "RR" = c(1, 36, 37, 38))
+
+simulation_numbers3 <- data.frame("PDCC" = c(0, 7, 8, 9, 10, 17))
+
+simulation_shortIDs <- data.frame("Drain0" = c("D0-CS-CV", "D0-CS-CT", "D0-CS-NT", "D0-R-CV", "D0-R-CT", "D0-R-NT","D0-R-R"),
+                                  "Drain1" = c("D1-CS-CV", "D1-CS-CT", "D1-CS-NT", "D1-R-CV", "D1-R-CT", "D1-R-NT","D1-R-R"),
+                                  "Drain2" = c("D2-CS-CV", "D2-CS-CT", "D2-CS-NT", "D2-R-CV", "D2-R-CT", "D2-R-NT","D2-R-R"),
+                                  "Drain3" = c("D3-CS-CV", "D3-CS-CT", "D3-CS-NT", "D3-R-CV", "D3-R-CT", "D3-R-NT","D3-R-R"))
+simulation_shortIDs2 <- data.frame("CSCV" = c("D0-CS-CV", "D1-CS-CV", "D2-CS-CV", "D3-CS-CV"),
+                                    "CSCT" = c("D0-CS-CT", "D1-CS-CT", "D2-CS-CT", "D3-CS-CT"),
+                                    "CSNT" = c("D0-CS-NT", "D1-CS-NT", "D2-CS-NT", "D3-CS-NT"),
+                                  "RCV" = c("D0-R-CV", "D1-R-CV", "D2-R-CV", "D3-R-CV"),
+                                  "RCT" = c("D0-R-CT", "D1-R-CT", "D2-R-CT", "D3-R-CT"),
+                                  "RNT" = c("D0-R-NT", "D1-R-NT", "D2-R-NT", "D3-R-NT"),
+                                  "RR" = c("D0-R-R", "D1-R-R", "D2-R-R", "D3-R-R"))
+simulation_shortIDs3 <- data.frame("PDCC" = c("DX-X-CV","PD-2E", "PD-2L", "PD-4L", "PD-6L", "DX-CC-NT"))
+
+simulation_names <- data.frame("Drain0" = c("Drain0", "Drain0CT", "Drain0NT", "RetiredPothole", "ConTillRetired", "NoTillRetired","RetiredAll"),
+                               "Drain1" = c("Drain01", "ConTillDrain01", "Drain1NT", "Drain1Retired", "Drain1RetiredCT", "Drain1RetiredNT","Drain1RetiredAll"),
+                               "Drain2" = c("Drain02", "ConTillDrain02", "Drain2NT", "Drain2Retired", "Drain2RetiredCT", "Drain2RetiredNT","Drain2RetiredAll"),
+                               "Drain3" = c("Drain03", "ConTillDrain03", "Drain3NT", "Drain3Retired", "Drain3RetiredCT", "Drain3RetiredNT","Drain3RetiredAll"))
+
+simulation_names2 <- data.frame("CSCV" = c("Drain0", "Drain01", "Drain02", "Drain03"),
+                                "CSCT" = c("Drain0CT", "ConTillDrain01", "ConTillDrain02", "ConTillDrain03"),
+                                "CSNT" = c("Drain0NT", "Drain1NT", "Drain2NT", "Drain3NT"),
+                                "RCV" = c("RetiredPothole", "Drain1Retired", "Drain2Retired", "Drain3Retired"),
+                                "RCT" = c("ConTillRetired", "Drain1RetiredCT", "Drain2RetiredCT", "Drain3RetiredCT"),
+                                "RNT" = c("NoTillRetired", "Drain1RetiredNT", "Drain2RetiredNT", "Drain3RetiredNT"),
+                                "RR" = c("RetiredAll", "Drain1RetiredAll", "Drain2RetiredAll", "Drain3RetiredAll"))
+simulation_names3 <- data.frame("PDCC" = c("Base", "PlantDate01", "PlantDate02", "PlantDate03", "PlantDate04", "CoverCrop"))
+
+```
+
+
+```{r}
+function(data.df, title, nm, supp.labs, labnms) {
+  
+  png(paste("days_all_",nm,".png"), width=700, height=700)
+  
+  plot.avg.annual.by.wetness <- ggplot(data=data.df, aes(x=code, y=value))+
+    geom_boxplot(alpha=0.5) +
+    # facet_grid(rows=vars(wetness),
+    #            labeller = labeller(wetness = c(high = "High Precip", low="Low Precip",
+    #                                            med="Medium Precip"))) +
+    theme(axis.text.x =element_text(angle = 90)) +
+    theme(text = element_text(size = 16)) +
+    ylim(0, 150)+
+    labs(
+      y = "Days Flooded",
+      x = "Scenario"#,
+      # title = title
+    )
+  
+  return(plot.avg.annual.by.wetness)
+  
+}
+```
+
+```{r}
+# days.data.drain0$code[days.data.drain0$variable == "RetiredPothole"] <- "D0-R-CV"
+# days.data.drain0$code <- factor(days.data.drain0$code, levels = simulation_shortIDs$Drain0)
+# days.data.drain1$code <- factor(days.data.drain1$code, levels = simulation_shortIDs$Drain1)
+# days.data.drain2$code <- factor(days.data.drain2$code, levels = simulation_shortIDs$Drain2)
+# days.data.drain3$code <- factor(days.data.drain3$code, levels = simulation_shortIDs$Drain3)
+
+```
+
+
+```{r}
+p1 <- boxplot.function.partitioned.no.wetness(days.data.drain0, "Simulation Comparison, No Drainage Present", "drain0", simulation_shortIDs$Drain0, simulation_names$Drain0)
+dev.off()
+
+p2 <- boxplot.function.partitioned.no.wetness(days.data.drain1, "Simulation Comparison, Subsurface Drainage", "drain1", simulation_shortIDs$Drain1, simulation_names$Drain1)
+dev.off()
+
+p3 <- boxplot.function.partitioned.no.wetness(days.data.drain2, "Simulation Comparison, One Inlet", "drain2", simulation_shortIDs$Drain2, simulation_names$Drain2)
+dev.off()
+
+p4 <- boxplot.function.partitioned.no.wetness(days.data.drain3, "Simulation Comparison, Multiple Inlets", "drain3", simulation_shortIDs$Drain3, simulation_names$Drain3)
+dev.off()
+
+png(filename = "CH4_Fig2.png", width=1000, height=750)
+ggarrange(p1, p2,p3, p4, 
+          labels=c("A", "B", "C", "D"),
+          ncol=2, nrow=2)
+dev.off()
+```
+
+```{r}
+p1dat<-layer_data(p1, 1)
+p2dat<-layer_data(p2, 1)
+p3dat<-layer_data(p3, 1)
+p4dat<-layer_data(p4, 1)
+
+```

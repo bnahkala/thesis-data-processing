@@ -1,0 +1,178 @@
+---
+title: "Publication Figure Script"
+author: "Brady Nahkala"
+date: "9/1/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Data Import 
+
+```{r}
+events.data.all <- read.csv("CH3_events_data.csv", header=T, sep=",")
+```
+
+
+# Script
+
+```{r}
+
+# SETUP =====
+library(tidyr)
+library(ggplot2)
+library(gridExtra)
+library(ggpubr)
+library(purrr)
+
+events.data.all <- event.lengths.all[ , c(5:45)]
+# write.csv(events.data.all, file = "eventsdata.csv")
+events.data.all <- events.data.all[ , c(40, 41, 22+1, 23+1, 24+1, 3+1, 12+1, 13+1, 1+1, 4+1, 14+1, 25+1, 19+1, 29+1, 33+1, 
+                                        36+1, 5+1, 15+1, 26+1, 20+1, 30+1, 34+1, 37+1, 6+1, 16+1, 27+1, 21+1, 31+1, 35+1, 38+1)]
+colnames(events.data.all) <- c("Pothole", "consecdays", 
+                               "D0-CS-CV", "D0-CS-CT", "D0-CS-NT", "D0-R-CV", "D0-R-CT", "D0-R-NT","D0-R-R", 
+                               "D1-CS-CV", "D1-CS-CT", "D1-CS-NT", "D1-R-CV", "D1-R-CT", "D1-R-NT","D1-R-R", 
+                               "D2-CS-CV", "D2-CS-CT", "D2-CS-NT", "D2-R-CV", "D2-R-CT", "D2-R-NT","D2-R-R",
+                               "D3-CS-CV", "D3-CS-CT", "D3-CS-NT", "D3-R-CV", "D3-R-CT", "D3-R-NT","D3-R-R")
+
+events.data.all.gather <- events.data.all %>%
+  gather(key="code", value="count", 3:30)
+
+events.test <- events.data.all.gather %>%
+  # filter(code %in% simulation_shortIDs$Drain0) %>%
+  group_by(code) %>%
+  summarise(one = sum(count[consecdays == 1]), two = sum(count[consecdays >= 2 & consecdays <= 4]),
+            five = sum(count[consecdays >= 5 & consecdays < 10]), tenp = sum(count[consecdays >= 10])) %>%
+  gather(key="length", value="value", 2:5) %>%
+  as.data.frame()
+
+events.test$value <- events.test$value / 6
+
+#
+# head(events.drain.comp)
+# head(events.retire.comp)
+# head(events.tillage.comp)
+
+events.test$code2 <-
+  factor(
+    events.test$code,
+    levels = c(
+      "D0-CS-CV",
+      "D0-CS-CT",
+      "D0-CS-NT",
+      "D0-R-CV",
+      "D0-R-CT",
+      "D0-R-NT",
+      "D0-R-R",
+      "D1-CS-CV",
+      "D1-CS-CT",
+      "D1-CS-NT",
+      "D1-R-CV",
+      "D1-R-CT",
+      "D1-R-NT",
+      "D1-R-R",
+      "D2-CS-CV",
+      "D2-CS-CT",
+      "D2-CS-NT",
+      "D2-R-CV",
+      "D2-R-CT",
+      "D2-R-NT",
+      "D2-R-R",
+      "D3-CS-CV",
+      "D3-CS-CT",
+      "D3-CS-NT",
+      "D3-R-CV",
+      "D3-R-CT",
+      "D3-R-NT",
+      "D3-R-R"
+    )
+  )
+
+
+
+
+
+# Functions =====
+plot.event.count2 <- function(data.df, filterid) {
+  
+  df <- data.df %>%
+    filter(code %in% simulation_shortIDs[ , filterid]) 
+  
+  # png(paste("plot.event.count.",nm,".png"), width = 800, height = 600)
+  windows()
+  plot.count <- ggplot(data=df, aes(x=consecdays, y=count, color=Pothole))+
+    geom_point()+
+    facet_grid(rows = vars(code))+
+    labs(
+      x = "Duration of Event (days)",
+      y = "Count of Event"
+    )
+  
+  return(plot.count)
+}
+
+# AGGREGATED =====
+plot.events.aggregated <- function(data.df, filterid) {
+  
+  df <- data.df %>%
+    # as.data.frame() %>%
+    filter(code %in% simulation_shortIDs[ , filterid]) 
+  
+  df$length2 <- factor(df$length, levels = c("one", "two", "five", "tenp"))
+  
+  windows()
+  plot.count <- ggplot(data=df, aes(x=length2, y=value, fill=code2))+
+    geom_bar(stat="identity", position = "dodge", alpha = 0.5)+
+    labs(
+      x = "",
+      y = "",
+      fill = "Scenario"
+    ) +
+    ylim(0, 110) +
+    scale_x_discrete(labels=c("1", "2-4", "5-9", "10+")) +
+    scale_fill_brewer(palette = "Dark2")
+  
+  return(plot.count)
+  
+}
+
+
+ev1<- plot.events.aggregated(events.test, 1)
+ev1 <- ev1 + theme(axis.text.x = element_blank())
+
+ev2<-plot.events.aggregated(events.test, 2)
+ev2 <- ev2 + theme(axis.text.x = element_blank(), axis.text.y = element_blank())
+
+ev3<-plot.events.aggregated(events.test, 3)
+
+ev4<-plot.events.aggregated(events.test, 4)
+ev4 <- ev4 + theme(axis.text.y = element_blank())
+
+
+#combine
+png(filename = "eventplots_all.png", height = 800, width = 600)
+
+arr <- ggarrange(
+  ev1 + 
+    scale_fill_brewer(palette = "Dark2", labels=c("DX-CS-CV","DX-CS-CT", "DX-CS-NT", "DX-R-CV", "DX-R-CT",  "DX-R-NT", "DX-R-R"))
+  ,
+  ev2,
+  ev3,
+  ev4,
+  labels = c("A", "B", "C", "D"),
+  ncol = 2,
+  nrow = 2, 
+  common.legend = T, 
+  legend = "top"
+)
+annotate_figure(arr, 
+                left =text_grob("Average Count of Events", rot = 90),
+                bottom = text_grob("Length of Events (days)"))
+
+dev.off()
+
+plt.data <- layer_data(ev4, 1)
+```
+
