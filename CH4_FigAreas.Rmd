@@ -17,9 +17,13 @@ library(reshape2)
 library(ggpubr)
 ```
 
+```{r}
+maxareaML <- read.csv("CH4_MaxArea.csv", header=T, sep=",")
+```
+
 
 ```{r}
-maxareaML <- rbind(max.data.drain0, max.data.drain1, max.data.drain2, max.data.drain3)
+# maxareaML <- rbind(max.data.drain0, max.data.drain1, max.data.drain2, max.data.drain3)
 maxareaML$scen <- factor(maxareaML$scen)
 
 head(maxareaML)
