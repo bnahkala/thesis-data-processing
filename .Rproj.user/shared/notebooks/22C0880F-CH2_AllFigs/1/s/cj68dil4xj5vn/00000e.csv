@@ -1,0 +1,4 @@
+"0","# DATA =================="
+"0","stats_data <- as.data.frame(read.csv(""Stats_Data_All_Potholes_Methods.csv"", header=T, sep = "",""))"
+"0","stats_data_course <- as.data.frame(read.csv(""Stats_Data_Course_All.csv"", header=T, sep = "",""))"
+"0","head(stats_data)"

@@ -1,0 +1,298 @@
+---
+title: "Chapter 2 Figures"
+author: "Brady Nahkala"
+date: "9/3/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F)
+```
+
+# Figure 3
+Pothole calibration statistics curves for all potholes and all 4 statistics. 
+
+```{r, fig.width=3.54, fig.height=7.08}
+# AUTHOR: BRADY NAHKALA
+# LAST REVISED: 03 SEP 2020
+# PURPOSE: CREATE FIGURES FOR AWM TECH MEMO PUBLICATION
+# 03.23.2020 - updated with new Cardinal and mouth data
+# 
+# 
+# =======================
+library(ggplot2)
+library(dplyr)
+library(RColorBrewer)
+library(gridExtra)
+library(tidyr)
+library(ggpubr)
+library(ggeffects)
+
+# DATA ==================
+stats_data <- as.data.frame(read.csv("Stats_Data_All_Potholes_Methods.csv", header=T, sep = ","))
+stats_data_course <- as.data.frame(read.csv("Stats_Data_Course_All.csv", header=T, sep = ","))
+head(stats_data)
+head(stats_data_course)
+
+nms <- c("Bunny", "Walnut", "Lettuce", "Cardinal", "Hen", "Mouth")
+cols <- c("steelblue", "tan4", "seagreen", "firebrick3", "goldenrod", "mediumpurple3")
+
+# FIGURE 3 ==============
+stats_data_filter <- stats_data %>%
+  filter(Method == 3)
+
+stats_data_long <- stats_data_filter[, c(1, 7:11)] %>%
+  gather(key="Statistic", value = "result", 3:6) %>%
+  filter(Statistic != "PBIAS")
+
+ylim.p <- c(-0.2, 1.1)
+ylim.s <- c(-50, 150)
+
+b <- diff(ylim.p)/diff(ylim.s)
+a <- b*(ylim.p[1]-ylim.s[1])
+
+txtsize <- 9  
+
+fig3a <- ggplot(stats_data_long, aes(x=Infiltration, y=result, color=Pothole, linetype=Statistic))+
+  geom_line(size=1.25)+
+  scale_color_manual(breaks=nms, values=cols)+
+  geom_hline(aes(yintercept=1))+
+  geom_hline(aes(yintercept=0),linetype="longdash")+
+  ylab("NSE, RSR, R^2")+
+  xlab("")+
+  theme(text = element_text(size = txtsize))+
+  theme_bw()+
+  guides(col=guide_legend(nrow = 3, title.position="top"), linetype=guide_legend(nrow=3, title.position="top"))
+
+fig3b <- ggplot(stats_data_filter)+
+  geom_line(aes(x=Infiltration, y=PBIAS, color=Pothole), linetype="solid", size=1.5)+
+  scale_color_manual(breaks=nms, values=cols)+
+  geom_hline(aes(yintercept=0),linetype="solid")+
+  ylab("PBIAS")+
+  xlab("Infiltration (mm/d)")+
+  theme(text = element_text(size = txtsize))+
+  theme_bw()
+
+
+png("Fig3_Calibration.png", width=90, height=180, units="mm", res=200)
+# windows()
+ggarrange(fig3a, fig3b, ncol=1, common.legend = T, legend = "top")
+dev.off()
+
+ggarrange(fig3a, fig3b, ncol=1, common.legend = T, legend = "top")
+
+```
+
+# Figure 4
+Comparisons of calibrations for a single pothole using all area methods. 
+
+```{r, fig.width=3.54, fig.height=3.54}
+# DATA ==================
+stats_data <- as.data.frame(read.csv("Stats_Data_All_Potholes_Methods.csv", header=T, sep = ","))
+stats_data_course <- as.data.frame(read.csv("Stats_Data_Course_All.csv", header=T, sep = ","))
+head(stats_data)
+head(stats_data_course)
+
+
+stats_data_mw <- stats_data[ , c(1:2, 7:11)] %>%
+  filter(Pothole == "Lettuce" | Pothole == "Walnut") %>%
+  gather(key="Statistic", value = "result", 4:7) %>%
+  filter(Statistic !="PBIAS")
+
+stats_data_mw$Method2 <- character(length(stats_data_mw$Pothole))    
+stats_data_mw <- within(stats_data_mw, Method2[Method == 1] <- "LiDAR-dV")  
+stats_data_mw <- within(stats_data_mw, Method2[Method == 2] <- "NAIP") 
+stats_data_mw <- within(stats_data_mw, Method2[Method == 3] <- "LiDAR-SA")
+stats_data_mw <- within(stats_data_mw, rm(Method))
+stats_data_mw <- stats_data_mw %>%
+  rename(Method = Method2)
+
+# PLOT ==================
+# need to change size of lines - BIGGER!
+# currently does not plot PBIAS
+
+fig4 <- ggplot(stats_data_mw, aes(x = Infiltration, y=result, color=Method, linetype=Statistic)) +
+  geom_line(size=0.5)+
+  facet_grid(rows = vars(Pothole))+
+  xlab("Infiltration (mm/d)")+
+  ylab("NSE, RSR, and R^2")+
+  theme_bw(base_size = 9)+
+  theme(legend.position = c(0.6, 0.1), legend.text = element_text(size=5), legend.direction = "vertical", legend.spacing = unit(-3.5, 'mm'), legend.background = element_blank(),
+    legend.box.background = element_blank(),
+    legend.key = element_blank())+
+  guides(col=guide_legend(nrow=1, title = NULL), linetype=guide_legend(nrow=1, title = NULL))
+# windows()
+fig4
+
+png("Fig04_MethodsComparison.png", width=90, height=90, units="mm", res=200)
+fig4
+dev.off()
+```
+
+
+# Figure 5
+Hydrograph showing equifinality. 
+
+```{r, fig.width=3.54, fig.height=3.54}
+# DATA ==================
+# data comes from Cardinal
+hydro_data <- as.data.frame(read.csv("hydrograph_data.csv", header=T, sep = ","))
+head(hydro_data)
+hydro_data_long <- hydro_data %>%
+  gather(key="Source", value = "Volume", 2:5)
+head(hydro_data_long)
+
+Fig5_hydrograph <- ggplot(hydro_data_long, aes(x=as.Date(Date, "%m/%d/%y"), y=Volume, group=Source))+
+  geom_line(size=0.5, aes(linetype=Source))+
+  scale_linetype_manual(
+    name="Data Source",
+    values = c("dotdash", "longdash", "solid", "dashed"),
+    labels=c("LiDAR-dV","LiDAR-SA","Monitoring Data", "NAIP")
+    )+
+  labs(
+    x = "Date",
+    y="Flooded Volume (m^3)"
+  )+
+  theme(text = element_text(size=9))+
+  theme_bw()+
+  theme(legend.position = c(0.75, 0.75), legend.text = element_text(size=7))
+  # guides(linetype=guide_legend(nrow = 2, title.position=c(0.75, 0.75)))
+
+# windows()
+Fig5_hydrograph
+
+png(filename = "Fig05_Hydrograph.png", width=90, height=90, units="mm", res=200)
+Fig5_hydrograph
+dev.off()
+```
+
+# Figure 6
+Power law equifinality with infiltration.
+
+```{r, fig.width=3.54, fig.height=3.54}
+# DATA =================
+
+data.df <- data.frame("methods"=as.numeric(c(rep(1, 6), rep(2, 6), rep(3, 6))), 
+                      "pothole" = c(rep(c("Bunny", "Walnut", "Lettuce", "Cardinal",
+                                          "Hen", "Mouth"), 3)), 
+                      "capa.ratio" = c(14.4, 6.5, 12.1, 29.3, 10.0, 25.9, 
+                                       17.1, 9.4, 9.2, 13.3, 5.0, 17.1, 
+                                       7.5, 3.7, 6.3, 8.7, 6.9, 10.2), 
+                      "infiltration" = c(123, 41, 54, 255, 66, 156, 
+                                         153, 61, 41, 113, 31, 116, 
+                                         75, 22, 27, 74, 44, 68), 
+                      "pothole.area" = c(2.8, 1.5, 1.1, 0.44, 0.35, 0.37, 
+                                         2.35, 1.03, 1.45, 0.97, 0.7, 0.56, 
+                                         5.35, 2.6, 2.11, 1.49, 0.5, 0.94))
+
+# filtered to method 3
+data.three.df <- data.df[13:18, ]
+
+# linear model
+l.bun <- lm(log(infiltration) ~ log(pothole.area), data=data.df[c(1, 7, 13), ])
+
+Fig6 <- ggplot(data = data.df, aes(x = log(pothole.area), y = log(infiltration), color=pothole))+
+  geom_point()+
+  #geom_line(aes(x=pothole.area, y=60*pothole.area^-1))+
+  stat_smooth(method = 'lm', se=FALSE)+
+  ylab("Log of Calibrated Infiltration (mm/day)")+
+  xlab("Log of Pothole Surface Area (ha)")+
+  labs(color="Pothole")+
+  theme_bw(base_size = 9)+
+  theme(legend.position = "top")
+  
+png(filename="Fig6_PowerCurves.png", width=90, height=90, units="mm", res=200)
+# windows()
+Fig6
+dev.off()
+Fig6
+```
+
+
+# Figure 7
+Regression of CAPA and infiltration. 
+
+```{r, fig.width=3.54, fig.height=3.54}
+# DATA =================
+
+data.df <- data.frame("methods"=as.numeric(c(rep(1, 6), rep(2, 6), rep(3, 6))), 
+                      "pothole" = c(rep(c("bunny", "walnut", "lettuce", "cardinal",
+                                        "hen", "mouth"), 3)), 
+                      "capa.ratio" = c(14.4, 6.5, 12.1, 29.3, 10.0, 25.9, 
+                                       17.1, 9.4, 9.2, 13.3, 5.0, 17.1, 
+                                       7.5, 3.7, 6.3, 8.7, 6.9, 10.2), 
+                      "infiltration" = c(123, 41, 54, 255, 66, 156, 
+                                         153, 61, 41, 113, 31, 116, 
+                                         75, 22, 27, 74, 44, 68), 
+                      "pothole.area" = c(2.8, 1.5, 1.1, 0.44, 0.35, 0.37, 
+                                         2.35, 1.03, 1.45, 0.97, 0.7, 0.56, 
+                                         5.35, 2.6, 2.11, 1.49, 0.5, 0.94))
+
+# filtered to method 3
+data.three.df <- data.df[13:18, ]
+
+
+# PLOT, no filter =================
+regr1 <- lm(infiltration ~ capa.ratio, data = data.df)
+regr1
+
+Fig7 <- ggplot(data=data.df, aes(x=capa.ratio, y = infiltration))+
+  geom_point() +
+  geom_smooth(method = 'lm')+
+  ylab("Calibrated Infiltration (mm/day)")+
+  xlab("Microwatershed Area to Pothole Area Ratio")+
+  theme(text=element_text(size=14))
+
+# png(filename="caparegr.png", width=400, height=400)
+# windows()
+Fig7
+# dev.off()
+
+# PLOT, filter ====================
+regr2 <- lm(infiltration ~ capa.ratio, data = data.three.df)
+regr2
+
+
+Fig7filter <- ggplot(data=data.three.df, aes(x=capa.ratio, y = infiltration))+
+  geom_point() +
+  geom_smooth(method = 'lm')+
+  ylab("Calibrated Infiltration (mm/day)")+
+  xlab("Microwatershed Area to Pothole Area Ratio")+
+  theme(text=element_text(size=14))
+# windows()
+# Fig7filter
+
+gscat <- ggscatter(data.three.df, x="capa.ratio", y="infiltration", add="reg.line")+
+  stat_cor()+
+  stat_regline_equation()+
+  labs(
+    x="Microwatershed Area to Pothole Area Ratio",
+    y="Calibrated Infiltration (mm/day)"
+  )
+
+formula <- y ~ poly(x, 1, raw = TRUE)
+fig7filter2 <- ggplot(data.three.df, aes(x=capa.ratio, y = infiltration)) +
+  geom_point() +
+  stat_smooth(method = "lm", formula = formula) +
+  stat_regline_equation(
+    aes(label =  ..eq.label..),
+    formula = formula,
+    label.y=100
+  )+
+  stat_regline_equation(aes(label = ..adj.rr.label..), formula = formula,
+    label.y=90)+
+  labs(
+    x="Microwatershed Area to Pothole Area Ratio",
+    y="Calibrated Infiltration (mm/day)"
+  )+
+  theme_bw(base_size = 9)
+
+# windows()
+fig7filter2
+
+png(filename="Fig07_Regression.png", width=90, height=90, units="mm", res=200)
+# windows()
+fig7filter2
+dev.off()
+```
+
