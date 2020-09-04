@@ -5,16 +5,16 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "980491336",
+    "hash" : "2609757279",
     "id" : "E72644AC",
-    "lastKnownWriteTime" : 1599165782,
-    "last_content_update" : 1599165782219,
+    "lastKnownWriteTime" : 1599226596,
+    "last_content_update" : 1599226596638,
     "path" : "C:/github/thesis-data-processing/CH2_AllFigs.Rmd",
     "project_path" : "CH2_AllFigs.Rmd",
     "properties" : {
-        "cursorPosition" : "9,3",
-        "last_setup_crc32" : "22AD4698bb338d19",
-        "scrollLine" : "0"
+        "cursorPosition" : "205,4",
+        "last_setup_crc32" : "A33F45A01bfe9924",
+        "scrollLine" : "189"
     },
     "read_only" : false,
     "read_only_alternatives" : [

@@ -22,7 +22,7 @@
 "0","Fig6 <- ggplot(data = data.df, aes(x = log(pothole.area), y = log(infiltration), color=pothole))+"
 "0","  geom_point()+"
 "0","  #geom_line(aes(x=pothole.area, y=60*pothole.area^-1))+"
-"0","  stat_smooth(method = 'lm', se=FALSE)+"
+"0","  stat_smooth(method = 'lm', se=FALSE, size=0.75)+"
 "0","  ylab(""Log of Calibrated Infiltration (mm/day)"")+"
 "0","  xlab(""Log of Pothole Surface Area (ha)"")+"
 "0","  labs(color=""Pothole"")+"

@@ -54,7 +54,7 @@ a <- b*(ylim.p[1]-ylim.s[1])
 txtsize <- 9  
 
 fig3a <- ggplot(stats_data_long, aes(x=Infiltration, y=result, color=Pothole, linetype=Statistic))+
-  geom_line(size=1.25)+
+  geom_line(size=0.75)+
   scale_color_manual(breaks=nms, values=cols)+
   geom_hline(aes(yintercept=1))+
   geom_hline(aes(yintercept=0),linetype="longdash")+
@@ -65,7 +65,7 @@ fig3a <- ggplot(stats_data_long, aes(x=Infiltration, y=result, color=Pothole, li
   guides(col=guide_legend(nrow = 3, title.position="top"), linetype=guide_legend(nrow=3, title.position="top"))
 
 fig3b <- ggplot(stats_data_filter)+
-  geom_line(aes(x=Infiltration, y=PBIAS, color=Pothole), linetype="solid", size=1.5)+
+  geom_line(aes(x=Infiltration, y=PBIAS, color=Pothole), linetype="solid", size=0.75)+
   scale_color_manual(breaks=nms, values=cols)+
   geom_hline(aes(yintercept=0),linetype="solid")+
   ylab("PBIAS")+
@@ -194,7 +194,7 @@ l.bun <- lm(log(infiltration) ~ log(pothole.area), data=data.df[c(1, 7, 13), ])
 Fig6 <- ggplot(data = data.df, aes(x = log(pothole.area), y = log(infiltration), color=pothole))+
   geom_point()+
   #geom_line(aes(x=pothole.area, y=60*pothole.area^-1))+
-  stat_smooth(method = 'lm', se=FALSE)+
+  stat_smooth(method = 'lm', se=FALSE, size=0.75)+
   ylab("Log of Calibrated Infiltration (mm/day)")+
   xlab("Log of Pothole Surface Area (ha)")+
   labs(color="Pothole")+
