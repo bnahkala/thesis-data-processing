@@ -24,8 +24,7 @@ area.mouth.df <- read.csv("area_time_series_mouth.csv", header=T, sep=",")
 
 # Script
 
-```{r, fig.width=7.09, fig.height=7.09}
-
+```{r}
 # LIBRARY =====
 library(dplyr)
 library(tidyr)
@@ -33,6 +32,12 @@ library(ggplot2)
 library(gridExtra)
 library(ggpubr)
 library(purrr)
+```
+
+
+```{r, fig.width=7.09, fig.height=7.09}
+
+
 
 # NAME METADATA ====
 simulation_shortIDs <- data.frame("Drain0" = c("D0-CS-CV", "D0-CS-CT", "D0-CS-NT", "D0-R-CV", "D0-R-CT", "D0-R-NT","D0-R-R"),
@@ -349,5 +354,77 @@ annotate_figure(arr,
                 bottom = text_grob("Fraction of Years Simulated"))
 
 dev.off()
+```
+
+# Loess smoothing
+
+```{r}
+area.curves.by.drain.b<- area.curves.by.drain %>%
+  filter(Pothole == chars.potholes$pothole[1])
+area.curves.by.drain.w <- area.curves.by.drain %>%
+  filter(Pothole == chars.potholes$pothole[2])
+area.curves.by.drain.l <- area.curves.by.drain %>%
+  filter(Pothole == chars.potholes$pothole[3])
+area.curves.by.drain.c <- area.curves.by.drain %>%
+  filter(Pothole == chars.potholes$pothole[4])
+area.curves.by.drain.h <- area.curves.by.drain %>%
+  filter(Pothole == chars.potholes$pothole[5])
+area.curves.by.drain.m <- area.curves.by.drain %>%
+  filter(Pothole == chars.potholes$pothole[6])
+
+area.curves.by.drain.tst <- area.curves.by.drain %>%
+  filter(Pothole != chars.potholes$pothole[6])
+```
+
+```{r}
+# FIG TESTING S4.4 ====
+tst2 <- ggplot(area.curves.by.drain.tst, aes(x=pct, y=area.pct, color=group))+
+  geom_smooth(method = "loess", se=TRUE)+
+  scale_color_discrete(name="Drainage Status",
+                       breaks=c("drain0", "drain1", "drain2", "drain3"),
+                       labels=c("No Drainage", "Subsurface Drainage",
+                                "Subsurface with One Inlet", "Subsurface with Multiple Inlets"))+
+  labs(
+    x="Percent of Years",
+    y="Percent of Total Pothole Area"#,
+    # color="Drainage Status"#,
+    # title="All potholes but Mouth"
+  )+
+  xlim(0, 1)+
+  ylim(0,1.1)+
+  theme(text = element_text(size=20))
+  
+
+# png(filename = "loess_tst_fit_to_all_scen_by_pothole.png", width=800, height=800)
+# windows()
+tst2
+# dev.off()
+
+
+area.curves.by.LU.tst <- area.curves.by.LU %>%
+  filter(Pothole != chars.potholes$pothole[6])
+
+tst3 <- ggplot(area.curves.by.LU.tst, aes(x=pct, y=area.pct, color=group))+
+  geom_smooth(method = "loess", se=T, alpha=0.2)+
+  scale_color_discrete(name="Land Use Status",
+                       breaks=c("CSCV", "CSCT", "CSNT", "RCV", "RCT", "RNT", "RR"),
+                       labels=c("Farmed, Conventional Till", "Farmed, Conservation Till",
+                                "Farmed, No Till", "Retired Pothole, Conventional Till",
+                                "Retired Pothole, Conservation Till", "Retired Pothole, No Till",
+                                "Retired Watershed"))+
+  labs(
+    x="Percent of Years",
+    y="Percent of Total Pothole Area"#,
+    # color="Drainage Status"#,
+    # title="All potholes but Mouth"
+  )+
+  xlim(0, 1)+
+  ylim(0,1.1)+
+  theme(text = element_text(size=20))
+
+# png(filename = "loess_tst_fit_to_all_scen_by_LU.png", width=800, height=800)
+# windows()
+tst3
+# dev.off()
 ```
 

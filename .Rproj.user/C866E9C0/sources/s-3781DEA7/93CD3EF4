@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1599577143144.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "93CD3EF4",
+    "lastKnownWriteTime" : 1599577637,
+    "last_content_update" : 1599577637833,
+    "path" : "C:/github/thesis-data-processing/CH3_FigAreaFreq.Rmd",
+    "project_path" : "CH3_FigAreaFreq.Rmd",
+    "properties" : {
+        "cursorPosition" : "384,69",
+        "last_setup_crc32" : "3781DEA7bb338d19",
+        "scrollLine" : "371"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

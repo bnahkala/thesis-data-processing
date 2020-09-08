@@ -1,6 +1,0 @@
-"0","area.bunny.df <- read.csv(""area_time_series_bunny.csv"", header=T, sep="","")"
-"0","area.walnut.df <- read.csv(""area_time_series_walnut.csv"", header=T, sep="","")"
-"0","area.lettuce.df <- read.csv(""area_time_series_lettuce.csv"", header=T, sep="","")"
-"0","area.cardinal.df <- read.csv(""area_time_series_cardinal.csv"", header=T, sep="","")"
-"0","area.hen.df <- read.csv(""area_time_series_hen.csv"", header=T, sep="","")"
-"0","area.mouth.df <- read.csv(""area_time_series_mouth.csv"", header=T, sep="","")"
