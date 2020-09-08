@@ -12,4 +12,4 @@ We calibrated AnnAGNPS to water volume, taking the simulated depth times the wet
 
 Scripts to generate figures for Ch. 2 (calibration of AnnAGNPS), Ch. 3 (annagnps simulations) and Ch. 4 (random forest) of my thesis were aggregated from multiple prior R projects. Source data for each of the figures was saved to csv format to create standalone Rmd files. Some of these figure scripts rely on data generated from prior steps (see above headings), so there may be ways to back out the data and redo certain portions of it if objectives for figures change, etc. 
 
-Scripts are labeled at the 10's place based on chapter #, ie. a script 21_Figure4.Rmd is a script to generate Figure 4 in Chapter 2. 
+Scripts are labeled at the 10's place based on chapter #, ie. a script 32_Ch3_MaxAreas.Rmd is a script to generate Figure 2 in Chapter 3. 
