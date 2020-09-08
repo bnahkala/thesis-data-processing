@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1599594014280.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "300688452",
+    "id" : "3FE8546C",
+    "lastKnownWriteTime" : 1599594233,
+    "last_content_update" : 1599594233751,
+    "path" : "C:/github/thesis-data-processing/CH3_FigAreas.Rmd",
+    "project_path" : "CH3_FigAreas.Rmd",
+    "properties" : {
+        "cursorPosition" : "339,11",
+        "last_setup_crc32" : "312BFB79bb338d19",
+        "scrollLine" : "327"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
