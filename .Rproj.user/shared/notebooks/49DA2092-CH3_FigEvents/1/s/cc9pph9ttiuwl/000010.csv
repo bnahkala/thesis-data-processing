@@ -1,8 +1,0 @@
-"0",""
-"0","ev2<-plot.events.aggregated(events.test, 2)"
-"0","ev2 <- ev2 + theme(axis.text.x = element_blank(), axis.text.y = element_blank())"
-"0",""
-"0","ev3<-plot.events.aggregated(events.test, 3)"
-"0",""
-"0","ev4<-plot.events.aggregated(events.test, 4)"
-"0","ev4 <- ev4 + theme(axis.text.y = element_blank())"

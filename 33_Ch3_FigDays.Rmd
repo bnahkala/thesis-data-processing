@@ -50,40 +50,40 @@ days.data.drain.all$all <- c(rep("All", length(days.data.drain.all$X)))
 
 # head(days.data.drain.all)
 # 
-# days.data.drain.all$code2 <-
-#   factor(
-#     days.data.drain.all$code,
-#     levels = c(
-#       "D0-CS-CV",
-#       "D0-CS-CT",
-#       "D0-CS-NT",
-#       "D0-R-CV",
-#       "D0-R-CT",
-#       "D0-R-NT",
-#       "D0-R-R",
-#       "D1-CS-CV",
-#       "D1-CS-CT",
-#       "D1-CS-NT",
-#       "D1-R-CV",
-#       "D1-R-CT",
-#       "D1-R-NT",
-#       "D1-R-R",
-#       "D2-CS-CV",
-#       "D2-CS-CT",
-#       "D2-CS-NT",
-#       "D2-R-CV",
-#       "D2-R-CT",
-#       "D2-R-NT",
-#       "D2-R-R",
-#       "D3-CS-CV",
-#       "D3-CS-CT",
-#       "D3-CS-NT",
-#       "D3-R-CV",
-#       "D3-R-CT",
-#       "D3-R-NT",
-#       "D3-R-R"
-#     )
-#   )
+days.data.drain.all$code2 <-
+  factor(
+    days.data.drain.all$code,
+    levels = c(
+      "D0-CS-CV",
+      "D0-CS-CT",
+      "D0-CS-NT",
+      "D0-R-CV",
+      "D0-R-CT",
+      "D0-R-NT",
+      "D0-R-R",
+      "D1-CS-CV",
+      "D1-CS-CT",
+      "D1-CS-NT",
+      "D1-R-CV",
+      "D1-R-CT",
+      "D1-R-NT",
+      "D1-R-R",
+      "D2-CS-CV",
+      "D2-CS-CT",
+      "D2-CS-NT",
+      "D2-R-CV",
+      "D2-R-CT",
+      "D2-R-NT",
+      "D2-R-R",
+      "D3-CS-CV",
+      "D3-CS-CT",
+      "D3-CS-NT",
+      "D3-R-CV",
+      "D3-R-CT",
+      "D3-R-NT",
+      "D3-R-R"
+    )
+  )
 
 
 boxplot.function.partitioned.no.wetness2 <- function(data.df, title, nm, supp.labs, labnms) {

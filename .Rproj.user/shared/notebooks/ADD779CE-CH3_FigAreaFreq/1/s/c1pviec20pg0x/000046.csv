@@ -1,6 +1,0 @@
-"0","Fig7_Loess <- ggarrange(Fig7a, Fig7b, labels = c(""A"", ""B""))"
-"2","`geom_smooth()` using formula 'y ~ x'
-"
-"2","`geom_smooth()` using formula 'y ~ x'
-"
-"0","annotate_figure(Fig7_Loess, bottom = text_grob(""Percent of Simulated Years"", size=9))"

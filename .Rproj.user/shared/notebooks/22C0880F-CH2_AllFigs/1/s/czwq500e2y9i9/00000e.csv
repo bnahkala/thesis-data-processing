@@ -1,4 +1,0 @@
-"0","# DATA =================="
-"0","# data comes from Cardinal"
-"0","hydro_data <- as.data.frame(read.csv(""hydrograph_data.csv"", header=T, sep = "",""))"
-"0","head(hydro_data)"

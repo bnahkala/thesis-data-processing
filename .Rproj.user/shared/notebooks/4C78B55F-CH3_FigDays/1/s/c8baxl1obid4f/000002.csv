@@ -1,2 +1,0 @@
-"0","days.data.drain.all <- read.csv(""CH3_days_flooded.csv"", header=T, sep="","")"
-"0","days.data.drain.all$all <- c(rep(""All"", length(days.data.drain.all$X)))"
