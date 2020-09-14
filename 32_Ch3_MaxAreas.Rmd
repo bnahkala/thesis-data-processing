@@ -359,3 +359,59 @@ plt.data4 <- layer_data(m4, 1)
 write.csv(plt.data4, "m4.csv", sep = ",")
 ```
 
+# Revised Figure based on ALK comment
+
+```{r}
+max.function.partitioned4 <- function(data.df, id, supp.labs, labnms) {
+  temp <- data.df %>%
+    group_by(Month, Pothole, scen, common, level) %>%
+    summarise(avg.max=mean(value), median.max=median(value)) #%>%
+    # filter(avg.max != 0)
+  
+  temp$Month <- factor(temp$Month)
+  temp$common <- factor(temp$common, c("DX-CS-CV","DX-CS-CT","DX-CS-NT","DX-R-CV","DX-R-CT","DX-R-NT","DX-R-R"))
+  temp$level <- factor(temp$level, levels = c("D0", "D1", "D2", "D3"))
+  
+  labs <- as.character(supp.labs)
+  names(labs) <- as.character(labnms)
+  
+  png(filename = paste0("avg_", id, "_comparison.png"), width=800, height=500)
+  # windows()
+  plot.max <- ggplot(temp, aes(x=Month, y=avg.max, fill=Pothole))+
+    geom_bar(stat="identity", position="identity", alpha=0.25, color="black", size=0.15)+
+    facet_grid(cols = vars(common), rows = vars(Pothole), labeller = labeller(common = labs))+
+    ylim(0, 25000)+
+    theme_bw(base_size = 8)+
+    # theme(axis.text.x = element_text(angle = 90))+
+    theme(strip.text.x = element_text(size = 8))+
+    theme(legend.position = "none")+
+    scale_x_discrete(breaks = c(1, 3, 5, 7, 9 ,11), labels=c("J", "M", "M", "J", "S", "N"))+
+    labs(
+      x="Month",
+      y="Pothole Surface Area (m^2)")+
+    scale_fill_brewer(palette = "Dark2")
+  plot.max
+  return(plot.max)
+}
+```
+
+
+```{r, fig.width=7.09, fig.height=7.09}
+
+max.data.drain <- rbind(max.data.drain0, max.data.drain1, max.data.drain2, max.data.drain3)
+max.data.drain$level <- c(rep("D0", 12600), rep("D1", 12600), rep("D2", 12600), rep("D3", 12600))
+max.data.drain$common <- c(rep(c(rep("DX-CS-CV", 1800), rep("DX-CS-CT", 1800),rep("DX-CS-NT", 1800),rep("DX-R-CV", 1800),rep("DX-R-CT", 1800),rep("DX-R-NT", 1800),rep("DX-R-R", 1800)), 4))
+
+labs_all <- c("DX-CS-CV","DX-CS-CT","DX-CS-NT","DX-R-CV","DX-R-CT","DX-R-NT","DX-R-R")
+
+m5 <- max.function.partitioned4(max.data.drain, "drain", labs_all, labs_all)
+dev.off()
+
+png(filename = "Fig3_MaxArea.png", width=190, height=190, units="mm", res=300)
+m5
+dev.off()
+
+
+m5
+```
+
