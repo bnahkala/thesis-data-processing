@@ -1,0 +1,42 @@
+"0","# LIBRARY ===="
+"0","library(tidyr)"
+"0","library(dplyr)"
+"2","package ‘dplyr’ was built under R version 3.6.3"
+"2","
+Attaching package: ‘dplyr’
+
+"
+"2","The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+"
+"2","The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+"
+"0","library(ggplot2)"
+"2","package ‘ggplot2’ was built under R version 3.6.3"
+"0","library(reshape2)"
+"2","
+Attaching package: ‘reshape2’
+
+"
+"2","The following object is masked from ‘package:tidyr’:
+
+    smiths
+
+"
+"0","library(ggpubr)"
+"2","Loading required package: magrittr
+"
+"2","
+Attaching package: ‘magrittr’
+
+"
+"2","The following object is masked from ‘package:tidyr’:
+
+    extract
+
+"

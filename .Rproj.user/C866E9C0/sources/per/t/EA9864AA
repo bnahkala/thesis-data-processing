@@ -5,16 +5,16 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "327377939",
+    "hash" : "3912447729",
     "id" : "EA9864AA",
-    "lastKnownWriteTime" : 1600109018,
-    "last_content_update" : 1600109018914,
+    "lastKnownWriteTime" : 1600188187,
+    "last_content_update" : 1600188187099,
     "path" : "C:/github/thesis-data-processing/32_Ch3_MaxAreas.Rmd",
     "project_path" : "32_Ch3_MaxAreas.Rmd",
     "properties" : {
-        "cursorPosition" : "407,9",
-        "last_setup_crc32" : "75798C44bb338d19",
-        "scrollLine" : "403"
+        "cursorPosition" : "404,99",
+        "last_setup_crc32" : "",
+        "scrollLine" : "372"
     },
     "read_only" : false,
     "read_only_alternatives" : [
