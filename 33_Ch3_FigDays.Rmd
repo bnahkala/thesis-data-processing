@@ -186,13 +186,13 @@ fig4.2b
 ```{r, fig.width=5.3, fig.height=6}
 png("Fig4_DaysInundated.png", width = 135, height = 150, units = "mm", res=300)
 FigDays <- ggarrange(fig4.2, fig4.2b, 
-          ncol = 1)
+          ncol = 1, labels = c("A", "B"), hjust = c(-2))
 annotate_figure(FigDays, left=text_grob("Average Annual Days of Flooding", rot = 90),
                 bottom=text_grob("Scenario"))
 dev.off()
 
 FigDays <- ggarrange(fig4.2, fig4.2b, 
-          ncol = 1)
+          ncol = 1,labels = c("A", "B"), hjust = c(-2))
 annotate_figure(FigDays, left=text_grob("Average Annual Days of Flooding", rot = 90),
                 bottom=text_grob("Scenario"))
 ```

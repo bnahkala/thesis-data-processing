@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1600435159211.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "515798188",
+    "id" : "3F609A96",
+    "lastKnownWriteTime" : 1600436037,
+    "last_content_update" : 1600436037450,
+    "path" : "C:/github/thesis-data-processing/33_Ch3_FigDays.Rmd",
+    "project_path" : "33_Ch3_FigDays.Rmd",
+    "properties" : {
+        "cursorPosition" : "190,41",
+        "last_setup_crc32" : "2C07D48Abb338d19",
+        "scrollLine" : "184"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
