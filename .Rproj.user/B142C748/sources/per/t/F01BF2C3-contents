@@ -1,0 +1,199 @@
+---
+title: "Publication Figure Script"
+author: "Brady Nahkala"
+date: "9/1/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Library
+
+```{r, warning=F, message=F}
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(ggpubr)
+```
+
+# Data import 
+
+```{r}
+days.data.drain.all <- read.csv("CH3_days_flooded.csv", header=T, sep=",")
+days.data.drain.all$all <- c(rep("All", length(days.data.drain.all$X)))
+```
+
+
+# Script 
+
+```{r}
+# create graph for annual ponded days for all variables
+# 
+# days.data.drain.all <-
+#   rbind(days.data.drain0, days.data.drain1, days.data.drain2,days.data.drain3)
+# days.data.drain.all <-
+#   rbind(
+#     days.data.CSCV,
+#     days.data.CSCT,
+#     days.data.CSNT,
+#     days.data.RCV,
+#     days.data.RCT,
+#     days.data.RNT,
+#     days.data.RR
+#   )
+
+# days.data.drain.all$code[days.data.drain.all$code == "DX-R-CV"] <- "D0-R-CV"
+# days.data.drain.all$bins <- character(length(days.data.drain.all$Pothole))
+# days.data.drain.all$bins <- c(rep("No Drainage", 126),rep("SS Drainage", 126),rep("SS + SI", 126),rep("SS + Multiple SI", 126))
+
+# head(days.data.drain.all)
+# 
+days.data.drain.all$code2 <-
+  factor(
+    days.data.drain.all$code,
+    levels = c(
+      "D0-CS-CV",
+      "D0-CS-CT",
+      "D0-CS-NT",
+      "D0-R-CV",
+      "D0-R-CT",
+      "D0-R-NT",
+      "D0-R-R",
+      "D1-CS-CV",
+      "D1-CS-CT",
+      "D1-CS-NT",
+      "D1-R-CV",
+      "D1-R-CT",
+      "D1-R-NT",
+      "D1-R-R",
+      "D2-CS-CV",
+      "D2-CS-CT",
+      "D2-CS-NT",
+      "D2-R-CV",
+      "D2-R-CT",
+      "D2-R-NT",
+      "D2-R-R",
+      "D3-CS-CV",
+      "D3-CS-CT",
+      "D3-CS-NT",
+      "D3-R-CV",
+      "D3-R-CT",
+      "D3-R-NT",
+      "D3-R-R"
+    )
+  )
+
+
+boxplot.function.partitioned.no.wetness2 <- function(data.df, title, nm, supp.labs, labnms) {
+  
+  png(paste("days_all_",nm,".png"), width=800, height=400)
+  
+  plot.avg.annual.by.wetness <- ggplot(data=data.df, aes(x=code2, y=value))+
+    geom_boxplot(alpha=0.5) +
+    facet_grid(rows=vars(all)) +
+    theme_bw(base_size = 8) +
+    theme(axis.text.x =element_blank()) +
+    ylim(0, 150)+
+    labs(
+      y = NULL,
+      x = NULL#,
+      # title = title
+    )
+  
+  return(plot.avg.annual.by.wetness)
+  
+}
+# boxplot.function.partitioned2 <-
+#   function(data.df, title, nm, supp.labs, labnms) {
+#     # png(paste("days.", nm, ".png"),
+#         # width = 700,
+#         # height = 700)
+#     
+#     plot.avg.annual.by.wetness <-
+#       ggplot(data = data.df, aes(x = code, y = value)) +
+#       geom_boxplot(alpha = 0.5) +
+#       facet_grid(rows = vars(Pothole)
+#                  # ,
+#                  # labeller = labeller(
+#                  #   Pothole = c(high = "High Precip", low = "Low Precip",
+#                  #               med = "Medium Precip")
+#                  # )
+#                  ) +
+#       theme_bw(base_size = 9)+
+#       theme(axis.text.x = element_text(angle = 90)) +
+#       ylim(0, 150) +
+#       labs(y = "Average Annual Days of Flooding",
+#            x = "Simulated Scenario",
+#            title = title)
+#     
+#     return(plot.avg.annual.by.wetness)
+#     
+#   }
+
+boxplot.function.partitioned <- function(data.df, title, nm, supp.labs, labnms) {
+  
+  df <- data.df
+  df$wetness2 <- factor(df$wetness, levels = c("low", "med", "high"))
+  
+  # png(paste("days.",nm,".png"), width=700, height=700)
+  
+  plot.avg.annual.by.wetness <- ggplot(data=df, aes(x=code2, y=value))+
+    geom_boxplot(alpha=0.5) +
+    facet_grid(rows=vars(wetness2),
+               labeller = labeller(wetness2 = c(high = "High", low="Low",
+                                               med="Medium"))) +
+    theme_bw(base_size = 8) +
+    theme(axis.text.x =element_text(angle = 90)) +
+    ylim(0, 150)+
+    labs(
+      y = NULL,
+      x = NULL
+    )
+  
+  return(plot.avg.annual.by.wetness)
+  
+}
+
+fig4.2 <- 
+  boxplot.function.partitioned.no.wetness2(days.data.drain.all, "All Data", "alldata", simulation_shortIDs2, simulation_names2)
+# dev.off()
+
+fig4.2data <- as.data.frame(layer_data(fig4.2, 1))
+# lapply(fig4.2data, function(x) write.table( data.frame(x), 'test.csv'  , append= T, sep=',' ))
+
+fig4.2b <- 
+  boxplot.function.partitioned(days.data.drain.all, "All Data", "alldata", simulation_shortIDs2, simulation_names2)
+# dev.off()
+
+# fig4.2c <- boxplot.function.partitioned2(days.data.drain.all, "All Data", "alldata2", simulation_shortIDs2, simulation_names2)
+# dev.off()
+
+fig4.2bdata <- as.data.frame(layer_data(fig4.2b, 1))
+# lapply(fig4.2bdata, function(x) write.table( data.frame(x), 'test2.csv'  , append= T, sep=',' ))
+```
+
+```{r}
+fig4.2
+```
+
+```{r}
+fig4.2b
+# fig4.2c
+```
+
+```{r, fig.width=5.3, fig.height=6}
+png("Fig4_DaysInundated.png", width = 135, height = 150, units = "mm", res=300)
+FigDays <- ggarrange(fig4.2, fig4.2b, 
+          ncol = 1, labels = c("A", "B"), hjust = c(-2))
+annotate_figure(FigDays, left=text_grob("Average Annual Days of Flooding", rot = 90),
+                bottom=text_grob("Scenario"))
+dev.off()
+
+FigDays <- ggarrange(fig4.2, fig4.2b, 
+          ncol = 1,labels = c("A", "B"), hjust = c(-2))
+annotate_figure(FigDays, left=text_grob("Average Annual Days of Flooding", rot = 90),
+                bottom=text_grob("Scenario"))
+```
+

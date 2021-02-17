@@ -142,11 +142,11 @@ hydro_data_long <- hydro_data %>%
   gather(key="Source", value = "Volume", 2:5)
 head(hydro_data_long)
 
-Fig5_hydrograph <- ggplot(hydro_data_long, aes(x=as.Date(Date, "%m/%d/%y"), y=Volume, group=Source))+
-  geom_line(size=0.5, aes(linetype=Source))+
-  scale_linetype_manual(
+Fig5_hydrograph <- ggplot(hydro_data_long, aes(x=as.Date(Date, "%m/%d/%y"), y=Volume, color=Source))+
+  geom_line(size=0.5)+
+  scale_color_manual(
     name="Data Source",
-    values = c("dotdash", "longdash", "solid", "dashed"),
+    values = c(cols[1], cols[2], "black", cols[4]),
     labels=c("LiDAR-dV","LiDAR-SA","Monitoring Data", "NAIP")
     )+
   labs(
