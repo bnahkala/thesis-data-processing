@@ -88,6 +88,8 @@ nms <- nms %>%
   bind_rows(nms3) 
 
 
+
+
 # VIZ ====
 
 # area.bunny.df.filter <- area.walnut.df %>%
@@ -337,7 +339,7 @@ dev.off()
 # using ggplots generated in data_viz.R
 
 
-png(filename = "Fig6_AreaFrequency.png", height = 190, width = 190, units = "mm", res = 300)
+png(filename = "Fig5_AreaFrequency.png", height = 190, width = 190, units = "mm", res = 300)
 
 arr <- ggarrange(
   g1,
@@ -356,6 +358,75 @@ annotate_figure(arr,
 
 dev.off()
 ```
+
+
+# Attempt at Figure 5 Revision, based on Response to Review, Reviewer 1
+
+```{r, fig.width=7.09, fig.height=7.09}
+# area.curve.drain0$drain <- "D0"
+# area.curve.drain1$drain <- "D1"
+# area.curve.drain2$drain <- "D2"
+# area.curve.drain3$drain <- "D3"
+# 
+# area.curve.drain <- rbind(area.curve.drain0, area.curve.drain1, area.curve.drain2, area.curve.drain3)
+# 
+# area.curve.drain$drain <- factor(area.curve.drain$drain, levels = c("D0", "D1", "D2", "D3"))
+
+# area.curve.drain$scen2 <- factor(area.curve.drain$scen, levels = c("Drain0", "Drain0CT", "Drain0NT",
+#                                                                      "RetiredPothole", "ConTillRetired",
+#                                                                      "NoTillRetired", "RetiredAll", 
+#                                                                     "Drain01", "ConTillDrain01", "Drain1NT",
+#                                                                    "Drain1Retired", "Drain1RetiredCT", 
+#                                                                    "Drain1RetiredNT", "Drain1RetiredAll", 
+#                                                                    "Drain02", "ConTillDrain02", "Drain2NT",
+#                                                                    "Drain2Retired", "Drain2RetiredCT", 
+#                                                                    "Drain2RetiredNT", "Drain2RetiredAll", 
+#                                                                    "Drain03", "ConTillDrain03", "Drain3NT",
+#                                                                    "Drain3Retired", "Drain3RetiredCT", 
+#                                                                    "Drain3RetiredNT", "Drain3RetiredAll"))
+
+
+plot.area.curves_Revised <- function(data.df, nm, supp.labs, labnms) {
+  
+  labs <- as.character(supp.labs)
+  names(labs) <- as.character(labnms)
+  
+  plt <- ggplot(data.df, aes(x=pct, y=area.pct, color=scen2, linetype=drain))+
+    geom_path(size=0.6)+
+    facet_grid(rows = vars(Pothole))+
+    labs(
+      x="Fraction of Years Simulation",
+      y="Fraction of Maximum Pothole Volume",
+      color="",
+      linetype=""
+    )+
+    theme_bw(base_size=9)+
+    theme(legend.position = "top")+
+    scale_color_discrete(name="Simulation Scenario", labels=labs)+
+    # scale_y_continuous(breaks = c("0", "0.5",  "1"))+
+    scale_color_brewer(palette = "Dark2", labels=c("DX-CS-CV","DX-CS-CT","DX-CS-NT","DX-R-CV","DX-R-CT","DX-R-NT", "DX-R-R"))+
+    # ylim(0, 1.1)+
+    xlim(0,1)
+  
+  
+  png(filename=paste0("area_curves_", nm,".png"), width=600, height=600)
+  # windows()
+  plt
+}
+
+g_Rev <- plot.area.curves_Revised(area.curve.drain, "drain", simulation_shortIDs$Drain1, simulation_names$Drain1)
+
+png(filename = "Fig5_AreaFrequency_Revised.png", height = 190, width = 190, units = "mm", res = 300)
+g_Rev
+dev.off()
+
+g_Rev
+
+dev.off()
+```
+
+
+
 
 # Loess smoothing
 

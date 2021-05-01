@@ -3,19 +3,23 @@
     "path": "C:/github/thesis-data-processing/32_Ch3_MaxAreas.Rmd",
     "project_path": "32_Ch3_MaxAreas.Rmd",
     "type": "r_markdown",
-    "hash": "1481978661",
+    "hash": "3126046045",
     "contents": "",
     "dirty": false,
     "created": 1604023337433.0,
     "source_on_save": false,
     "relative_order": 7,
-    "properties": {},
+    "properties": {
+        "cursorPosition": "429,0",
+        "scrollLine": "392",
+        "last_setup_crc32": "82E7F774bb338d19"
+    },
     "folds": "",
-    "lastKnownWriteTime": 1603929800,
+    "lastKnownWriteTime": 1619873478,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1603929800,
+    "last_content_update": 1619873478471,
     "read_only": false,
     "read_only_alternatives": []
 }

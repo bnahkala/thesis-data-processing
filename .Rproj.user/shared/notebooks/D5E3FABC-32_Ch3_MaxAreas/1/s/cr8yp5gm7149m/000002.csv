@@ -1,7 +1,6 @@
 "0","# LIBRARY ===="
 "0","library(tidyr)"
 "0","library(dplyr)"
-"2","package ‘dplyr’ was built under R version 3.6.3"
 "2","
 Attaching package: ‘dplyr’
 
@@ -17,7 +16,6 @@ Attaching package: ‘dplyr’
 
 "
 "0","library(ggplot2)"
-"2","package ‘ggplot2’ was built under R version 3.6.3"
 "0","library(reshape2)"
 "2","
 Attaching package: ‘reshape2’
@@ -29,14 +27,3 @@ Attaching package: ‘reshape2’
 
 "
 "0","library(ggpubr)"
-"2","Loading required package: magrittr
-"
-"2","
-Attaching package: ‘magrittr’
-
-"
-"2","The following object is masked from ‘package:tidyr’:
-
-    extract
-
-"

@@ -3,19 +3,23 @@
     "path": "C:/github/thesis-data-processing/35_36_Ch3_FigAreaFreq.Rmd",
     "project_path": "35_36_Ch3_FigAreaFreq.Rmd",
     "type": "r_markdown",
-    "hash": "3280975400",
+    "hash": "498256260",
     "contents": "",
     "dirty": false,
     "created": 1604023356348.0,
     "source_on_save": false,
     "relative_order": 10,
-    "properties": {},
+    "properties": {
+        "cursorPosition": "400,17",
+        "scrollLine": "374",
+        "last_setup_crc32": "82E7F774bb338d19"
+    },
     "folds": "",
-    "lastKnownWriteTime": 1603929800,
+    "lastKnownWriteTime": 1619876781,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1603929800,
+    "last_content_update": 1619876781456,
     "read_only": false,
     "read_only_alternatives": []
 }
